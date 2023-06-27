@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberSearchCondition;
 import study.querydsl.dto.MemberTeamDto;
 import study.querydsl.entity.Member;
+import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
 
 import java.util.List;
@@ -103,6 +104,75 @@ class MemberRepositoryTest {
 
         // then
     }
+
+    @Test
+    void querydslPredicateExecutorTest() throws Exception {
+
+        Team TeamA = new Team("teamA");
+        Team TeamB = new Team("teamB");
+        em.persist(TeamA);
+        em.persist(TeamB);
+
+        Member member1 = new Member("member1", 10, TeamA);
+        Member member2 = new Member("member2", 20, TeamA);
+
+        Member member3 = new Member("member3", 30, TeamB);
+        Member member4 = new Member("member4", 40, TeamB);
+        em.persist(member1);
+        em.persist(member2);
+        em.persist(member3);
+        em.persist(member4);
+
+        QMember member = QMember.member;
+        // given
+        Iterable<Member> result = memberRepository.findAll(member.age.between(20, 40).and(member.username.eq("member2")));
+
+        for (Member findMember : result) {
+            System.out.println("findMember = " + findMember);
+        }
+
+        // when
+
+
+        // then
+     }
+
+//    @Test
+//    void searchPageSimple2() throws Exception {
+//        // given
+//        Team TeamA = new Team("teamA");
+//        Team TeamB = new Team("teamB");
+//        em.persist(TeamA);
+//        em.persist(TeamB);
+//
+//        Member member1 = new Member("member1", 10, TeamA);
+//        Member member2 = new Member("member2", 20, TeamA);
+//
+//        Member member3 = new Member("member3", 30, TeamB);
+//        Member member4 = new Member("member4", 40, TeamB);
+//        em.persist(member1);
+//        em.persist(member2);
+//        em.persist(member3);
+//        em.persist(member4);
+//
+//        MemberSearchCondition condition = new MemberSearchCondition();
+//        PageRequest pageRequest = PageRequest.of(0, 3);
+//
+//        Page<MemberTeamDto> result = memberRepository.searchPageSimple2(condition, pageRequest);
+//
+//        assertThat(result.getSize()).isEqualTo(3);
+//        assertThat(result.getContent()).extracting("username").containsExactly("member1", "member2", "member3");
+//
+//
+//        // when
+//
+//
+//        // then
+//    }
+
+
+
+
 
 
 
